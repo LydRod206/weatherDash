@@ -24,14 +24,18 @@ The weatherDash is a web application that provides current weather information a
 3. Click on the pre-defined city buttons to quickly view weather data for popular cities.
 4. The search history is saved in the browser's local storage for future reference.
 
-## License
+### License
 
 This project is licensed under the [MIT License](LICENSE).
 
-## Acknowledgments
+### Acknowledgments
 
 - [OpenWeatherMap](https://openweathermap.org) for providing the weather data API.
 - Inspiration and code snippets from various online resources and tutorials.
 
+weatherDash can be found here:
+https://lydrod206.github.io/weatherDash/
+
+![Screenshot 2023-05-18 at 10 49 33 PM](https://github.com/LydRod206/weatherDash/assets/119384486/dd9eeea7-05bf-47c8-a3b9-51d59d51527b)
 
 
