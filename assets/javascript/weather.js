@@ -1,16 +1,17 @@
 const apiKey = "b9fe50f1bc06f17cccf57381fc2658d8";
-const searchForm = document.querySelector("form");
+const searchForm = document.querySelector("#search-form");
 const cityInput = document.querySelector("#city-input");
 const currentWeatherSection = document.querySelector("#current-weather");
 const fiveDayForecastSection = document.querySelector("#five-day-forecast");
 let searchHistory = JSON.parse(localStorage.getItem("searchHistory")) || [];
+
 
 function getWeatherData(city) {
   const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
   fetch(url)
     .then((response) => response.json())
     .then((data) => {
-      // Update current weather section with data
+    
       displayCurrentWeather(data);
     })
     .catch((error) => console.error(error));
@@ -19,17 +20,15 @@ function getWeatherData(city) {
   fetch(forecastUrl)
     .then((response) => response.json())
     .then((data) => {
-      // Update five day forecast section with data
+      
       displayFiveDayForecast(data);
     })
     .catch((error) => console.error(error));
 }
 
 function displayCurrentWeather(data) {
-  // Clear previous content
   currentWeatherSection.innerHTML = "";
 
-  // Extract relevant data from the API response
   const cityName = data.name;
   const date = new Date(data.dt * 1000).toLocaleDateString();
   const iconCode = data.weather[0].icon;
@@ -37,7 +36,6 @@ function displayCurrentWeather(data) {
   const humidity = data.main.humidity;
   const windSpeed = data.wind.speed;
 
-  // Create HTML elements to display the current weather
   const cityHeading = document.createElement("h2");
   cityHeading.textContent = cityName;
 
@@ -48,7 +46,8 @@ function displayCurrentWeather(data) {
   iconImage.src = `http://openweathermap.org/img/wn/${iconCode}.png`;
 
   const temperatureParagraph = document.createElement("p");
-  temperatureParagraph.textContent = `Temperature: ${temperature}°C`;
+  const temperatureFahrenheit = (temperature - 273.15) * 9/5 + 32;
+  temperatureParagraph.textContent = `Temperature: ${temperatureFahrenheit.toFixed(2)}°F`;
 
   const humidityParagraph = document.createElement("p");
   humidityParagraph.textContent = `Humidity: ${humidity}%`;
@@ -56,7 +55,6 @@ function displayCurrentWeather(data) {
   const windSpeedParagraph = document.createElement("p");
   windSpeedParagraph.textContent = `Wind Speed: ${windSpeed} m/s`;
 
-  // Append the elements to the current weather section
   currentWeatherSection.appendChild(cityHeading);
   currentWeatherSection.appendChild(dateParagraph);
   currentWeatherSection.appendChild(iconImage);
@@ -65,55 +63,46 @@ function displayCurrentWeather(data) {
   currentWeatherSection.appendChild(windSpeedParagraph);
 }
 
-function displayFiveDayForecast(data) {
-  // Clear previous content
-  fiveDayForecastSection.innerHTML = "";
+// ...
 
-  // Extract relevant data from the API response
+function displayFiveDayForecast(data) {
   const forecastItems = data.list;
 
-  // Loop through the forecast items and create HTML elements for each day
-  for (let i = 0; i < forecastItems.length; i += 8) {
+  for (let i = 0; i < forecastItems.length; i++) {
     const forecastItem = forecastItems[i];
 
     const date = new Date(forecastItem.dt * 1000).toLocaleDateString();
     const iconCode = forecastItem.weather[0].icon;
     const temperature = forecastItem.main.temp;
     const humidity = forecastItem.main.humidity;
-    const windSpeed = forecastItem.wind.speed;
 
-    // Create HTML elements for the forecast item
     const forecastCard = document.createElement("div");
-    forecastCard.classList.add("forecast-card");
+    forecastCard.classList.add("col-sm-2", "bg-primary", "forecast", "text-white", "ml-2", "mb-3", "p-2", "mt-2", "rounded");
 
-    const dateHeading = document.createElement("h3");
-    dateHeading.textContent = date;
+    const dateParagraph = document.createElement("p");
+    dateParagraph.textContent = date;
+    forecastCard.appendChild(dateParagraph);
 
     const iconImage = document.createElement("img");
     iconImage.src = `http://openweathermap.org/img/wn/${iconCode}.png`;
+    forecastCard.appendChild(iconImage);
 
     const temperatureParagraph = document.createElement("p");
-    temperatureParagraph.textContent = `Temperature: ${temperature}°C`;
+    const temperatureFahrenheit = (temperature - 273.15) * 9 / 5 + 32;
+    temperatureParagraph.textContent = `Temp: ${temperatureFahrenheit.toFixed(2)}°F`;
+    forecastCard.appendChild(temperatureParagraph);
 
     const humidityParagraph = document.createElement("p");
     humidityParagraph.textContent = `Humidity: ${humidity}%`;
-
-    const windSpeedParagraph = document.createElement("p");
-    windSpeedParagraph.textContent = `Wind Speed: ${windSpeed} m/s`;
-
-    // Append the elements to the forecast card
-    forecastCard.appendChild(dateHeading);
-    forecastCard.appendChild(iconImage);
-    forecastCard.appendChild(temperatureParagraph);
     forecastCard.appendChild(humidityParagraph);
-    forecastCard.appendChild(windSpeedParagraph);
 
-    // Append the forecast card to the five day forecast section
-    fiveDayForecastSection.appendChild(forecastCard);
+    const forecastElement = document.querySelector(`#fDate${i}`);
+    forecastElement.innerHTML = "";
+    forecastElement.appendChild(forecastCard);
   }
 }
 
-function handleSearch(event) {
+function handleSearchFormSubmit(event) {
   event.preventDefault();
   const city = cityInput.value.trim();
   getWeatherData(city);
@@ -122,7 +111,7 @@ function handleSearch(event) {
   cityInput.value = "";
 }
 
-// List of cities
+
 const cities = [
   "Seattle",
   "New York",
@@ -137,7 +126,7 @@ const cities = [
   "Mexico City"
 ];
 
-// Loop through the list of cities and add event listeners to the search buttons
+
 const cityButtons = document.querySelectorAll(".city-choice");
 cityButtons.forEach((button) => {
   button.addEventListener("click", () => {
@@ -147,4 +136,5 @@ cityButtons.forEach((button) => {
     localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
   });
 });
-searchForm.addEventListener("submit", handleSearch);
+
+searchForm.addEventListener("submit", handleSearchFormSubmit);
